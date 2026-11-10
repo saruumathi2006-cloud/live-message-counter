@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Character Counter</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 {
+            color: #333333;
+            margin-bottom: 8px;
+            font-size: 1.5rem;
+        }
+
+        .subtitle {
+            color: #666666;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .textarea-wrapper {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 14px;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #333333;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        textarea:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        textarea.limit-reached {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+
+        .status-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .char-counter {
+            font-weight: 500;
+            color: #4b5563;
+        }
+
+        .remaining-count {
+            color: #6b7280;
+        }
+
+        .warning-message {
+            color: #ef4444;
+            font-weight: 600;
+            font-size: 0.85rem;
+            min-height: 20px;
+            margin-top: 8px;
+            display: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .warning-message.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Live Message Counter</h2>
+    <p class="subtitle">Maximum limit: <strong><span id="max-display">200</span> characters max</strong></p>
+
+    <div class="textarea-wrapper">
+        <textarea id="message-input" placeholder="Type your message here..."></textarea>
+    </div>
+
+    <div class="status-container">
+        <span class="char-counter" id="char-count">0/200 characters</span>
+        <span class="remaining-count" id="char-remaining">200 remaining</span>
+    </div>
+
+    <p class="warning-message" id="warning-msg">Character limit reached! You cannot type more characters.</p>
+</div>
+
+<script>
+    const textarea = document.getElementById('message-input');
+    const charCount = document.getElementById('char-count');
+    const charRemaining = document.getElementById('char-remaining');
+    const warningMsg = document.getElementById('warning-msg');
+    const maxLimit = 200;
+
+    textarea.addEventListener('input', () => {
+        let currentLength = textarea.value.length;
+
+        // If length exceeds maxLimit (e.g., via paste or fast typing), truncate and prevent further entry
+        if (currentLength >= maxLimit) {
+            if (currentLength > maxLimit) {
+                textarea.value = textarea.value.slice(0, maxLimit);
+            }
+            currentLength = maxLimit;
+            
+            // Show warning and alert state
+            warningMsg.classList.add('visible');
+            textarea.classList.add('limit-reached');
+        } else {
+            // Hide warning
+            warningMsg.classList.remove('visible');
+            textarea.classList.remove('limit-reached');
+        }
+
+        const remaining = maxLimit - currentLength;
+
+        // Update displays
+        charCount.textContent = `${currentLength}/${maxLimit} characters`;
+        charRemaining.textContent = `${remaining} remaining`;
+    });
+</script>
+
+</body>
+</html>
+
